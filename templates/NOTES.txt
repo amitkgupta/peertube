@@ -1,0 +1,6 @@
+1. Create a DNS A record pointing {{ .Values.webserver.hostname }} to the external/load balancer IP of the Ingress.
+2. Find the generated PeerTube root user password by looking for "User password: " in the logs of the PeerTube pod.
+3. Visit http{{ if .Values.ingress.tls.enabled }}s{{ end }}://{{ .Values.webserver.hostname }}.
+4. Login with User "root" and Password from step 2.
+
+NOTE: ffmpeg is a handy utility to convert iPhone movies into formats accepted by PeerTube.
