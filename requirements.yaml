@@ -1,0 +1,9 @@
+dependencies:
+- name: postgresql
+  version: 0.15.0
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  condition: deps.pg.managed
+- name: redis
+  version: 3.6.2
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  condition: deps.redis.managed

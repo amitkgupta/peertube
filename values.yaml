@@ -1,0 +1,45 @@
+image:
+  repository: chocobozzz/peertube
+  tag: production-stretch
+  pullPolicy: IfNotPresent
+
+webserver:
+  https:
+    enabled: true
+
+pvc:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 100Gi
+
+deps:
+  pg:
+    managed: true
+  redis:
+    managed: true
+  smtp:
+    tls:
+      enabled: true
+
+postgresql:
+  fullnameOverride: peertube-postgresql-1531009616
+  postgresDatabase: peertube
+
+redis:
+  fullnameOverride: peertube-redis-1531009616
+  usePassword: false
+  cluster:
+    enabled: false
+  master:
+    persistence:
+      enabled: false
+
+ingress:
+  enabled: true
+  annotations: {}
+  tls:
+    enabled: true
+
+service:
+  type: NodePort
+  port: 8084 # PeerTube => P T => 80 84

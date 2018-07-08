@@ -1,0 +1,24 @@
+{{- if and .Values.pvc.enabled ( not .Values.pvc.existingClaim ) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "peertube.fullName" . }}
+  labels:
+    app: {{ template "peertube.fullName" . }}
+    chart: {{ template "peertube.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  accessModes:
+    - {{ .Values.pvc.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.pvc.size | quote }}
+{{- if .Values.pvc.storageClass }}
+{{- if (eq "-" .Values.pvc.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.pvc.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end -}}

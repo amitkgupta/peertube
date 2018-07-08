@@ -1,0 +1,120 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "peertube.fullName" . }}
+  labels:
+    app: {{ template "peertube.fullName" . }}
+    chart: {{ template "peertube.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "peertube.fullName" . }}
+      release: {{ .Release.Name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ template "peertube.fullName" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: PEERTUBE_DB_HOSTNAME
+{{- if .Values.deps.pg.managed }}
+          value: {{ .Values.postgresql.fullnameOverride }}
+{{- else }}
+          value: {{ required "deps.pg.hostname required unless deps.pg.managed is true" .Values.deps.pg.hostname }}
+{{- end }}
+        - name: PEERTUBE_DB_USERNAME
+{{- if .Values.deps.pg.managed }}
+          value: {{ default "postgres" .Values.postgresql.postgresUser | quote }}
+{{- else }}
+          value: {{ required "deps.pg.username required unless deps.pg.managed is true" .Values.deps.pg.username }}
+{{- end }}
+        - name: PEERTUBE_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+{{- if .Values.deps.pg.managed }}
+              name: {{ .Values.postgresql.fullnameOverride }}
+{{- else }}
+              name: {{ template "peertube.postgresqlSecretName" . }}
+{{- end }}
+              key: postgres-password
+        - name: PEERTUBE_REDIS_HOSTNAME
+{{- if .Values.deps.redis.managed }}
+          value: {{ .Values.redis.fullnameOverride }}-master
+{{- else }}
+          value: {{ required "deps.redis.hostname required unless deps.redis.managed is true" .Values.deps.redis.hostname }}
+{{- end }}
+        - name: PEERTUBE_SMTP_HOSTNAME
+          value: {{ required "deps.smtp.hostname required" .Values.deps.smtp.hostname }}
+        - name: PEERTUBE_SMTP_USERNAME
+          valueFrom:
+            secretKeyRef:
+{{- if .Values.deps.smtp.existingSecret }}
+              name: {{ .Values.deps.smtp.existingSecret }}
+{{- else }}
+              name: {{ template "peertube.smtpSecretName" . }}
+{{- end }}
+              key: un
+        - name: PEERTUBE_SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+{{- if .Values.deps.smtp.existingSecret }}
+              name: {{ .Values.deps.smtp.existingSecret }}
+{{- else }}
+              name: {{ template "peertube.smtpSecretName" . }}
+{{- end }}
+              key: pw
+        - name: PEERTUBE_SMTP_PORT
+          value: {{ required "deps.smtp.port required" .Values.deps.smtp.port | quote }}
+        - name: PEERTUBE_SMTP_FROM
+          value: {{ required "deps.smtp.from required" .Values.deps.smtp.from }}
+        - name: PEERTUBE_SMTP_TLS
+          value: {{ .Values.deps.smtp.tls.enabled | quote }}
+        - name: PEERTUBE_ADMIN_EMAIL
+          value: {{ required "adminEmail required" .Values.adminEmail }}
+        - name: PEERTUBE_WEBSERVER_HOSTNAME
+          value: {{ required "webserver.hostname required" .Values.webserver.hostname }}
+        - name: PEERTUBE_WEBSERVER_PORT
+{{- if .Values.webserver.https.enabled }}
+          value: "443"
+{{- else }}
+          value: "80"
+{{- end }}
+        - name: PEERTUBE_WEBSERVER_HTTPS
+          value: {{ .Values.webserver.https.enabled | quote }}
+        ports:
+          - name: svc2pod
+            containerPort: 9000
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: svc2pod
+        readinessProbe:
+          httpGet:
+            path: /
+            port: svc2pod
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: data
+{{- if .Values.pvc.enabled }}
+        persistentVolumeClaim:
+{{- if .Values.pvc.existingClaim }}
+          claimName: {{ .Values.pvc.existingClaim }}
+{{- else }}
+          claimName: {{ template "peertube.fullName" . }}
+{{- end }}
+{{- else }}
+        emptyDir: {}
+{{- end }}

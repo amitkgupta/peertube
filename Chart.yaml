@@ -1,0 +1,17 @@
+apiVersion: "v1"
+name: "peertube"
+version: 0.0.1
+description: "Federated (ActivityPub) video streaming platform using P2P (BitTorrent) directly in the web browser with WebTorrent."
+keywords:
+  - "peertube"
+  - "video"
+  - "streaming"
+  - "p2p"
+home: "https://joinpeertube.org/"
+sources:
+  - "https://github.com/Chocobozzz/PeerTube"
+maintainers:
+  - name: "Amit Kumar Gupta"
+    url: "https://akgupta.ca"
+icon: "https://joinpeertube.org/favicon.png"
+appVersion: "production-stretch"

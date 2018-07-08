@@ -1,0 +1,27 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "peertube.fullName" . }}
+  labels:
+    app: {{ template "peertube.fullName" . }}
+    chart: {{ template "peertube.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- with .Values.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+{{- if .Values.ingress.tls.enabled }}
+  tls:
+{{- if .Values.ingress.tls.existingSecret }}
+  - secretName: {{ .Values.ingress.tls.existingSecret }}
+{{- else }}
+  - secretName: {{ template "peertube.tlsIngressSecretName" . }}
+{{- end }}
+{{- end }}
+  backend:
+    serviceName: {{ template "peertube.fullName" . }}
+    servicePort: ing2svc
+{{- end }}
