@@ -7,7 +7,6 @@ metadata:
     chart: {{ template "peertube.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- end }}
 spec:
 {{- if .Values.ingress.tls.enabled }}
   tls:

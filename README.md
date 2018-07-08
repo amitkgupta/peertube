@@ -17,7 +17,13 @@ The following table lists the configurable parameters of the PeerTube chart and 
 | `image.pullPolicy`           | PeerTube webserver image pull policy                                                                     | `IfNotPresent`        |
 | `adminEmail`                 | email of PeerTube admin user                                                                             | `nil `                |
 | `webserver.hostname`         | hostname by which users will access PeerTube deployment; used in HTML pages for asset URLs               | `nil`                 |
-| `webserver.https.enabled`    | if `true`, users should access PeerTube deployment over HTTPS; used in HTML pages for asset URLs         | `true`                |
+| `ingress.tls.enabled`        | if `true` and ingress enabled, TLS enabled for ingress; used to set asset URL protocols in HTML pages    | `true`                |
+| `ingress.tls.existingSecret` | name of existing Secret to use for ingress TLS; if `nil` and ingress TLS enabled, new secret created     | `nil`                 |
+| `ingress.tls.cert`           | cert PEM for ingress TLS; must match `hostname`; ignored if existing secret used or ingress TLS disabled | `nil`                 |
+| `ingress.tls.key`            | private key PEM for ingress TLS; ignored if existing secret used or ingress TLS disabled                 | `nil`                 |
+| `service.type`               | type of service used to expose PeerTube                                                                  | `NodePort`            |
+| `service.port`               | port for service used to expose PeerTube                                                                 | `8084`                |
+| `service.nodePort`           | optional if service type is `NodePort`; ignored if service type is not `NodePort`                        | `nil`                 |
 | `pvc.enabled`                | if `true`, uploaded video content will be persisted			                                          | `true`                |
 | `pvc.existingClaim`          | name of existing PVC to use, must allow R/W access; if `nil` and PVC enabled, new PVC created            | `nil`                 |
 | `pvc.accessMode`             | access mode for PVC when created by this chart; ignored if existing claim used                           | `ReadWriteOnce`       |
@@ -35,10 +41,3 @@ The following table lists the configurable parameters of the PeerTube chart and 
 | `deps.smtp.port`             | port of SMTP server to use for PeerTube emails                                                           | `nil`                 |
 | `deps.smtp.from`             | "from" address to use with SMTP server used for PeerTube emails                                          | `nil`                 |
 | `deps.smtp.tls.enabled`      | if `true`, PeerTube connections to SMTP server use TLS                                                   | `true`                |
-| `ingress.tls.enabled`        | if `true` and ingress enabled, TLS enabled for ingress                                                   | `true`                |
-| `ingress.tls.existingSecret` | name of existing Secret to use for ingress TLS; if `nil` and ingress TLS enabled, new secret created     | `nil`                 |
-| `ingress.tls.cert`           | cert PEM for ingress TLS; must match `hostname`; ignored if existing secret used or ingress TLS disabled | `nil`                 |
-| `ingress.tls.key`            | private key PEM for ingress TLS; ignored if existing secret used or ingress TLS disabled                 | `nil`                 |
-| `service.type`               | type of service used to expose PeerTube                                                                  | `NodePort`            |
-| `service.port`               | port for service used to expose PeerTube                                                                 | `8084`                |
-| `service.nodePort`           | optional if service type is `NodePort`; ignored if service type is not `NodePort`                        | `nil`                 |

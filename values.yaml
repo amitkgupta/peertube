@@ -3,9 +3,13 @@ image:
   tag: production-stretch
   pullPolicy: IfNotPresent
 
-webserver:
-  https:
+ingress:
+  tls:
     enabled: true
+
+service:
+  type: NodePort
+  port: 8084 # PeerTube => P T => 80 84
 
 pvc:
   enabled: true
@@ -33,11 +37,3 @@ redis:
   master:
     persistence:
       enabled: false
-
-ingress:
-  tls:
-    enabled: true
-
-service:
-  type: NodePort
-  port: 8084 # PeerTube => P T => 80 84

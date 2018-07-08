@@ -84,13 +84,13 @@ spec:
         - name: PEERTUBE_WEBSERVER_HOSTNAME
           value: {{ required "webserver.hostname required" .Values.webserver.hostname }}
         - name: PEERTUBE_WEBSERVER_PORT
-{{- if .Values.webserver.https.enabled }}
+{{- if .Values.ingress.tls.enabled }}
           value: "443"
 {{- else }}
           value: "80"
 {{- end }}
         - name: PEERTUBE_WEBSERVER_HTTPS
-          value: {{ .Values.webserver.https.enabled | quote }}
+          value: {{ .Values.ingress.tls.enabled | quote }}
         ports:
           - name: svc2pod
             containerPort: 9000
