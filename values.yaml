@@ -35,8 +35,6 @@ redis:
       enabled: false
 
 ingress:
-  enabled: true
-  annotations: {}
   tls:
     enabled: true
 

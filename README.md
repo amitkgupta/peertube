@@ -35,8 +35,6 @@ The following table lists the configurable parameters of the PeerTube chart and 
 | `deps.smtp.port`             | port of SMTP server to use for PeerTube emails                                                           | `nil`                 |
 | `deps.smtp.from`             | "from" address to use with SMTP server used for PeerTube emails                                          | `nil`                 |
 | `deps.smtp.tls.enabled`      | if `true`, PeerTube connections to SMTP server use TLS                                                   | `true`                |
-| `ingress.enabled`            | if `true`, ingress resource created                                                                      | `true`                |
-| `ingress.annotations`        | annotations for ingress when created by this chart                                                       | `{}`                  |
 | `ingress.tls.enabled`        | if `true` and ingress enabled, TLS enabled for ingress                                                   | `true`                |
 | `ingress.tls.existingSecret` | name of existing Secret to use for ingress TLS; if `nil` and ingress TLS enabled, new secret created     | `nil`                 |
 | `ingress.tls.cert`           | cert PEM for ingress TLS; must match `hostname`; ignored if existing secret used or ingress TLS disabled | `nil`                 |
